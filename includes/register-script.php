@@ -1,5 +1,14 @@
 <?php       
     session_start();
+
+    /*
+    if (isset($_SESSION["username"])) {
+        header("Location: index.php");
+        exit();
+    } 
+    
+    */
+
     $response = [
         "valid" => null,
         "reason" => null,
@@ -59,7 +68,7 @@
     // Regex and Confirm Password Validation
     $fname_valid = !preg_match("/[^a-zA-Z]/", $fname);
     $lname_valid = !preg_match("/[^a-zA-Z]/", $lname);
-    $username_valid = preg_match("/^[a-zA-Z0-9_]{3,20}$/", $username);
+    $username_valid = preg_match("/^[a-zA-Z0-9_]+$/", $username);
     $email_valid = preg_match("/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/", $email);
     $password_valid = strlen($password) >= 8;
 
@@ -123,53 +132,21 @@
         return;
     }
 
-
-
     // Fetch All User Info
-    $stmt = $db->prepare("SELECT * FROM users");
+    $stmt = $db->prepare("SELECT username, email, hashed_password FROM users WHERE username = :username");
+    $stmt->bindValue(":username", $username, PDO::PARAM_STR);
     $stmt->execute();
 
-    $records = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $record = $stmt->fetch(PDO::FETCH_ASSOC);
 
-
-    if ($records) {
-        //print_r($records);
-
-        foreach ($records as $r) {
-
-            // Check if Username in DB
-            if (in_array($username, $r)) {
-                $response = [
-                    "valid" => false,
-                    "reason" => "username",
-                    "msg" => "Username already exists."
-                ];
-                //print_r($response);
-                return;
-            }
-
-            // Check if Email in DB
-            if (in_array($email, $r)) {
-                $response = [
-                    "valid" => false,
-                    "reason" => "email",
-                    "msg" => "Email address already exists."
-                ];
-                //print_r($response);
-                return;
-            }
-
-            // Check if Password in DB
-            if (password_verify($password, $r["hashed_password"])) {
-                $response = [
-                    "valid" => false,
-                    "reason" => "password",
-                    "msg" => "Password already exists in our records."
-                ];
-                //print_r($response);
-                return;
-            }
-        }
+    if ($record) {
+        $response = [
+            "valid" => false,
+            "reason" => "account_exists",
+            "msg" => "Account already exists. Try signing in instead."
+        ];
+        //print_r($response);
+        return;
     }
 
     // Profile Image
@@ -290,6 +267,15 @@
         imagedestroy($img);
         imagedestroy($cropped);
         imagedestroy($resized);
+
+        if (!$refined_profile_picture) {
+            $response = [
+                "valid" => false,
+                "reason" => "profile_picture",
+                "msg" => "Sorry there was an unexpected issue.",
+            ];
+            return;
+        }
     }
 
     // Store Inputs In DB
@@ -307,6 +293,7 @@
     $_SESSION["lname"] = $lname;
     $_SESSION["username"] = $username;
     $_SESSION["email"] = $email;
+    $_SESSION["profile_picture"] = $refined_profile_picture ? $refined_profile_picture : null;
     $_SESSION["last_activity"] = time();
 
     // Trigger Successful Response

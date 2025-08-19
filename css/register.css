@@ -470,6 +470,13 @@ body {
   color: #059669;
 }
 
+.file-input-wrapper.has-error .file-input-label {
+  border-style: solid;
+  border-color: rgba(239, 68, 68, 0.6);
+  background: rgba(254, 242, 242, 0.6);
+  color: #dc2626;
+}
+
 @keyframes float {
   0%,
   100% {
