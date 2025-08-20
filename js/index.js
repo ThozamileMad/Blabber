@@ -44,6 +44,13 @@ document.querySelectorAll(".follow-btn").forEach((btn) => {
 });
 
 // Post functionality
+sessionStorage.setItem("fname", "John");
+sessionStorage.setItem("lname", "Doe");
+sessionStorage.setItem("username", "JohnDoe");
+sessionStorage.setItem("email", "JohnDoe@gmail.com");
+sessionStorage.setItem("profile_picture", "./uploads/profile_pictures/1.jpg"); 
+sessionStorage.setItem("last_activity", Date.now());
+
 postBtn.addEventListener("click", function () {
   if (textarea.value.trim()) {
     // Simulate posting
@@ -56,10 +63,10 @@ postBtn.addEventListener("click", function () {
       newPost.className = "post";
       newPost.innerHTML = `
                         <div class="post-header">
-                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=96&h=96&fit=crop&crop=face" alt="Your Avatar" class="post-avatar">
+                            <img src="${sessionStorage.getItem("profile_picture")}" alt="Your Avatar" class="post-avatar">
                             <div class="post-user-info">
-                                <h4>You</h4>
-                                <p>@you • now</p>
+                                <h4>${sessionStorage.getItem("fname")} ${sessionStorage.getItem("lname")}</h4>
+                                <p>@${sessionStorage.getItem("username")} • now</p>
                             </div>
                         </div>
                         <div class="post-content">

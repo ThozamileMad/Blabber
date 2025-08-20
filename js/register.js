@@ -139,5 +139,13 @@ $form.on("submit", function (e) {
     validConfirmPassword
   ) {
     $form[0].submit();
+
+    // Store Inputs In Session
+    sessionStorage.setItem("fname", "$fNameInput.val()");
+    sessionStorage.setItem("lname", $lNameInput.val());
+    sessionStorage.setItem("username", $usernameInput.val());
+    sessionStorage.setItem("email", $emailInput.val());
+    sessionStorage.setItem("profile_picture", $fileInput[0].files[0] ? `../upload/profile_pictures/${$fileInput[0].files[0]}` : null); 
+    sessionStorage.setItem("last_activity", Date.now());
   }
 });

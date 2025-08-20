@@ -75,7 +75,7 @@
         <section class="feed">
             <div class="post-composer">
                 <div class="composer-header">
-                    <img src=<?php echo isset($_SESSION["profile_picture"]) ? "./" . $_SESSION["profile_picture"] : "" ?> alt="Your Avatar" class="composer-avatar">
+                    <img src=<?php echo isset($_SESSION["profile_picture"]) ? $_SESSION["profile_picture"] : "" ?> alt="Your Avatar" class="composer-avatar">
                     <div>
                         <h4>What's on your mind?</h4>
                     </div>

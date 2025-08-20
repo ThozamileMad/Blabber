@@ -13,5 +13,12 @@
         exit()
     }
     */
+    // Store Inputs In Session
+    $_SESSION["fname"] = "John";
+    $_SESSION["lname"] = "Doe";
+    $_SESSION["username"] = "JohnDoe";
+    $_SESSION["email"] = "JohnDoe@gmail.com";
+    $_SESSION["profile_picture"] = "./uploads/profile_pictures/1.jpg";
 
+    
 ?>
