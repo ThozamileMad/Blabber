@@ -1,0 +1,37 @@
+DELETE FROM users;
+
+INSERT INTO users (fname, lname, username, email, hashed_password, created_at, updated_at, profile_picture) VALUES
+('Alice', 'Johnson', 'alicej', 'alicej@example.com', '$2y$10$AbC1234567890xyz', '2025-07-12 14:33:20', '2025-07-12 14:33:20', '30.jpg'),
+('Bob', 'Smith', 'bobsmith', 'bobsmith@example.com', '$2y$10$ZxY9876543210abc', '2025-07-10 10:15:45', '2025-07-10 10:20:10', '29.jpg'),
+('Carol', 'Anderson', 'carola', 'carol.a@example.com', '$2y$10$1a2b3c4d5e6f7g8h9i', '2025-06-25 09:00:00', '2025-06-25 09:10:00', '28.jpg'),
+('David', 'Lee', 'dlee', 'dlee@example.net', '$2y$10$qwertyuiopasdfghj', '2025-08-01 12:00:00', '2025-08-01 12:00:00', '27.jpg'),
+('Eva', 'Martinez', 'evam', 'eva.m@example.org', '$2y$10$zxcvbnmlkjhgfdsa', '2025-07-05 08:25:30', '2025-07-05 08:30:10', '26.jpg'),
+('Frank', 'Nguyen', 'fnguyen', 'frank.n@example.com', '$2y$10$klm123n456o789pq', '2025-07-18 15:40:00', '2025-07-18 15:41:00', '25.jpg'),
+('Grace', 'Patel', 'gracep', 'grace.p@example.com', '$2y$10$sdfghjkllkjhgfds', '2025-08-10 11:20:15', '2025-08-10 11:21:25', '24.jpg'),
+('Henry', 'Clark', 'hclark', 'hclark@example.net', '$2y$10$poiuytrewqlkjhgf', '2025-06-29 16:00:00', '2025-06-29 16:10:00', '23.jpg'),
+('Isla', 'Wright', 'isla_w', 'isla.w@example.org', '$2y$10$mmnbvcxzlkjhgfds', '2025-07-23 19:30:00', '2025-07-23 19:31:00', '22.jpg'),
+('Jack', 'White', 'jackw', 'jack.white@example.com', '$2y$10$passhash12345678', '2025-08-01 13:00:00', '2025-08-01 13:05:00', '21.jpg'),
+
+('Karen', 'Young', 'kareny', 'karen.y@example.com', '$2y$10$12345678abcdefg', '2025-07-14 07:15:20', '2025-07-14 07:20:00', '20.jpg'),
+('Leo', 'Hill', 'leoh', 'leo.h@example.net', '$2y$10$abcdef1234567890', '2025-08-03 14:10:00', '2025-08-03 14:11:00', '19.jpg'),
+('Mia', 'Lopez', 'mia_lopez', 'mia.l@example.com', '$2y$10$1q2w3e4r5t6y7u8i', '2025-07-20 18:00:00', '2025-07-20 18:05:00', '18.jpg'),
+('Nathan', 'Green', 'nateg', 'nate.green@example.org', '$2y$10$asdzxcqwe1234567', '2025-07-30 20:00:00', '2025-07-30 20:10:00', '17.jpg'),
+('Olivia', 'Baker', 'oliviab', 'olivia.b@example.com', '$2y$10$qazwsxedcrfvtgby', '2025-06-22 13:15:00', '2025-06-22 13:16:00', '16.jpg'),
+('Paul', 'Evans', 'paulev', 'paul.ev@example.net', '$2y$10$lkjhgfdsazxcvbnm', '2025-07-25 09:45:00', '2025-07-25 09:55:00', '15.jpg'),
+('Quinn', 'Carter', 'quinnc', 'quinn.c@example.com', '$2y$10$yhnujmiklopasdzx', '2025-07-03 12:35:00', '2025-07-03 12:36:00', '14.jpg'),
+('Ruby', 'Reed', 'rubyreed', 'ruby.r@example.org', '$2y$10$hgfdsapoiuytrewq', '2025-07-07 11:00:00', '2025-07-07 11:02:00', '13.jpg'),
+('Sam', 'Turner', 'samturn', 'sam.t@example.com', '$2y$10$cvbnmasdfghjklqw', '2025-08-02 08:45:00', '2025-08-02 08:46:00', '12.jpg'),
+('Tina', 'Morgan', 'tinam', 'tina.m@example.net', '$2y$10$rtyuiopasdfghjkl', '2025-07-28 17:00:00', '2025-07-28 17:10:00', '11.jpg'),
+
+('Uma', 'Perry', 'umap', 'uma.p@example.com', '$2y$10$qwerty0987654321', '2025-06-27 15:15:00', '2025-06-27 15:20:00', '10.jpg'),
+('Victor', 'James', 'vicj', 'victor.j@example.org', '$2y$10$09876poiuytrewqa', '2025-08-05 12:30:00', '2025-08-05 12:35:00', '9.jpg'),
+('Wendy', 'Bell', 'wendyb', 'wendy.b@example.com', '$2y$10$mnbvcxzlkjhgfdsa', '2025-07-22 11:45:00', '2025-07-22 11:47:00', '8.jpg'),
+('Xander', 'Steele', 'xsteele', 'xander.s@example.net', '$2y$10$qweasdzxc1234567', '2025-06-30 14:25:00', '2025-06-30 14:30:00', '7.jpg'),
+('Yara', 'Cruz', 'yarac', 'yara.c@example.org', '$2y$10$lkjhgfdsasdfghjk', '2025-07-16 16:10:00', '2025-07-16 16:11:00', '6.jpg'),
+('Zane', 'Knight', 'zanek', 'zane.k@example.com', '$2y$10$poiuytrewq098765', '2025-07-08 10:00:00', '2025-07-08 10:02:00', '5.jpg'),
+('Amy', 'Scott', 'amys', 'amy.s@example.com', '$2y$10$testhashamy12345', '2025-08-09 08:00:00', '2025-08-09 08:03:00', '4.jpg'),
+('Brian', 'Taylor', 'briant', 'brian.t@example.net', '$2y$10$hashbrian8907654', '2025-07-13 07:30:00', '2025-07-13 07:32:00', '3.jpg'),
+('Cindy', 'Foster', 'cindyf', 'cindy.f@example.org', '$2y$10$hashcindy1234567', '2025-07-19 09:20:00', '2025-07-19 09:25:00', '2.jpg'),
+('Derek', 'Morris', 'derek_m', 'derek.m@example.com', '$2y$10$hashderek8901234', '2025-07-21 10:00:00', '2025-07-21 10:05:00', '1.jpg');
+
+SELECT * FROM users;
