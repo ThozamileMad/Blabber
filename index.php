@@ -30,7 +30,7 @@
                     </svg>
                     <div class="notification-badge"></div>
                 </button>
-                <img src=<?php echo isset($_SESSION["profile_picture"]) ? "./" . $_SESSION["profile_picture"] : "" ?> alt="User Avatar" class="user-avatar">
+                <img src=<?php echo $profile_picture ? "./" . $profile_picture : "" ?> alt="User Avatar" class="user-avatar">
             </div>
         </div>
     </header>
@@ -75,24 +75,32 @@
         <section class="feed">
             <div class="post-composer">
                 <div class="composer-header">
-                    <img src=<?php echo isset($_SESSION["profile_picture"]) ? $_SESSION["profile_picture"] : "" ?> alt="Your Avatar" class="composer-avatar">
+                    <img src=<?php echo $profile_picture ? $profile_picture : "" ?> alt="Your Avatar" class="composer-avatar">
                     <div>
                         <h4>What's on your mind?</h4>
                     </div>
                 </div>
                 <textarea class="composer-textarea" placeholder="Share your thoughts with the community..." rows="3"></textarea>
+                <img src="" alt="Post image" class="post-image post-image-preview">
+                <video src="" controls="" class="post-video post-video-preview"></video>
                 <div class="composer-actions">
                     <div class="composer-options">
-                        <button class="composer-btn" title="Add Photo">
+
+                        <input type="file" id="photo-upload" class="file-input" accept="image/*">
+                        <input type="file" id="video-upload" class="file-input" accept="video/*">
+                        
+                        <label for="photo-upload" class="composer-btn" title="Add Photo">
                             <svg fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
                             </svg>
-                        </button>
-                        <button class="composer-btn" title="Add Video">
+                        </label>
+                        
+                        <label for="video-upload" class="composer-btn" title="Add Video">
                             <svg fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z"></path>
                             </svg>
-                        </button>
+                        </label>
+
                         <button class="composer-btn" title="Add Poll">
                             <svg fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
@@ -108,178 +116,120 @@
                 </div>
             </div>
 
-            <article class="post">
-                <div class="post-header">
-                    <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=96&h=96&fit=crop&crop=face" alt="User Avatar" class="post-avatar">
-                    <div class="post-user-info">
-                        <h4>Sarah Johnson</h4>
-                        <p>@sarahj • 2 hours ago</p>
-                    </div>
-                </div>
-                <div class="post-content">
-                    <p>Just finished reading an amazing book about sustainable living! 📚✨ The insights about reducing our carbon footprint while maintaining a comfortable lifestyle are truly eye-opening. Highly recommend "The Sustainable Home" by anyone interested in making a positive environmental impact.</p>
-                    <p>What are your favorite eco-friendly habits? I'd love to hear your tips! 🌱</p>
-                </div>
-                <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=600&h=300&fit=crop" alt="Book and plant" class="post-image">
-                <div class="post-actions">
-                    <div class="action-buttons">
-                        <button class="action-btn">
-                            <svg fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
-                            </svg>
-                            <span>24</span>
-                        </button>
-                        <button class="action-btn">
-                            <svg fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"></path>
-                            </svg>
-                            <span>8</span>
-                        </button>
-                        <button class="action-btn">
-                            <svg fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path>
-                            </svg>
-                            <span>Share</span>
-                        </button>
-                    </div>
-                </div>
-            </article>
+            <?php 
+                foreach ($posts as $p) {
+                    $post_id = $p["post_id"];
+                    $profile_picture = $p["profile_picture"] ? "./uploads/profile_pictures/" . $p["profile_picture"] : "";
+                    $fname = $p["fname"];
+                    $lname = $p["lname"];
+                    $username = $p["username"];
+                    $msg = $p["msg"];
+                    $media = $p["media"];
+                    $media_type = $p["media_type"];
+                    $created_at = convert_time($p["created_at"]);
 
-            <article class="post">
-                <div class="post-header">
-                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=96&h=96&fit=crop&crop=face" alt="User Avatar" class="post-avatar">
-                    <div class="post-user-info">
-                        <h4>Alex Chen</h4>
-                        <p>@alexchen • 4 hours ago</p>
-                    </div>
-                </div>
-                <div class="post-content">
-                    <p>Working on a new project that combines AI with sustainable agriculture 🚜🤖 The potential to optimize crop yields while reducing environmental impact is incredible!</p>
-                    <p>Technology for good is what gets me excited every morning. What projects are you passionate about? #TechForGood #AI #Sustainability</p>
-                </div>
-                <div class="post-actions">
-                    <div class="action-buttons">
-                        <button class="action-btn liked">
-                            <svg fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
-                            </svg>
-                            <span>42</span>
-                        </button>
-                        <button class="action-btn">
-                            <svg fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"></path>
-                            </svg>
-                            <span>15</span>
-                        </button>
-                        <button class="action-btn">
-                            <svg fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path>
-                            </svg>
-                            <span>Share</span>
-                        </button>
-                    </div>
-                </div>
-            </article>
+                    if ($media) {
+                        if ($media_type == "image") $media = "./uploads/posted_pictures/" . $media;
+                        if ($media_type == "video") $media = "./uploads/posted_videos/" . $media;
+                    }
 
-            <article class="post">
-                <div class="post-header">
-                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=96&h=96&fit=crop&crop=face" alt="User Avatar" class="post-avatar">
-                    <div class="post-user-info">
-                        <h4>Emma Rodriguez</h4>
-                        <p>@emmarodriguez • 6 hours ago</p>
-                    </div>
-                </div>
-                <div class="post-content">
-                    <p>Beautiful sunset from my evening walk today 🌅 Sometimes the best therapy is just stepping outside and appreciating the world around us.</p>
-                    <p>Hope everyone is having a wonderful day! Remember to take breaks and enjoy the little moments ✨</p>
-                </div>
-                <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=300&fit=crop" alt="Beautiful sunset" class="post-image">
-                <div class="post-actions">
-                    <div class="action-buttons">
-                        <button class="action-btn">
-                            <svg fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
-                            </svg>
-                            <span>67</span>
-                        </button>
-                        <button class="action-btn">
-                            <svg fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"></path>
-                            </svg>
-                            <span>12</span>
-                        </button>
-                        <button class="action-btn">
-                            <svg fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path>
-                            </svg>
-                            <span>Share</span>
-                        </button>
-                    </div>
-                </div>
-            </article>
+                    echo '
+                        <article class="post">
+                            <div class="post-header">
+                                <img src="' . $profile_picture . '" alt="User Avatar" class="post-avatar">
+                                <div class="post-user-info">
+                                    <h4>' . $fname . ' ' . $lname . '</h4>
+                                    <p>@' . $username . ' • ' . $created_at . '</p>
+                                </div>
+                            </div>
+                            <div class="post-content">
+                                <p>' . $msg . '</p>
+                            </div>';
+
+                    if ($media) {
+                        if ($media_type == "image") {
+                            echo '<img src="' . $media . '" alt="Post image" class="post-image">';
+                        } elseif ($media_type == "video") {
+                            echo '<video src="' . $media . '" controls class="post-video"></video>';
+                        }
+                    }
+
+                    $stmt = $db->prepare("SELECT COUNT(*) FROM post_likes WHERE post_id = :post_id");
+                    $stmt->bindValue(":post_id", $post_id, PDO::PARAM_STR);
+                    $stmt->execute();
+                    $like_count = $stmt->fetchColumn();  
+
+                    $stmt = $db->prepare("SELECT COUNT(*) FROM post_comments WHERE post_id = :post_id");
+                    $stmt->bindValue(":post_id", $post_id, PDO::PARAM_STR);
+                    $stmt->execute();
+                    $comment_count = $stmt->fetchColumn();  
+
+                    echo '
+                            <div class="post-actions">
+                                <div class="action-buttons">
+                                    <button class="action-btn">
+                                        <svg fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span>'. $like_count . '</span>
+                                    </button>
+                                    <button class="action-btn">
+                                        <svg fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span>' . $comment_count . '</span>
+                                    </button>
+                                    <button class="action-btn">
+                                        <svg fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path>
+                                        </svg>
+                                        <span>Share</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </article>';
+                }
+                ?>
         </section>
 
         <aside class="right-sidebar">
             <div class="widget">
                 <h3>Trending Topics</h3>
-                <div class="trending-item">
-                    <div>
-                        <div class="trending-topic">#TechForGood</div>
-                        <div class="trending-posts">1.2K posts</div>
-                    </div>
-                </div>
-                <div class="trending-item">
-                    <div>
-                        <div class="trending-topic">#Sustainability</div>
-                        <div class="trending-posts">892 posts</div>
-                    </div>
-                </div>
-                <div class="trending-item">
-                    <div>
-                        <div class="trending-topic">#AI</div>
-                        <div class="trending-posts">2.1K posts</div>
-                    </div>
-                </div>
-                <div class="trending-item">
-                    <div>
-                        <div class="trending-topic">#Mindfulness</div>
-                        <div class="trending-posts">567 posts</div>
-                    </div>
-                </div>
-                <div class="trending-item">
-                    <div>
-                        <div class="trending-topic">#Photography</div>
-                        <div class="trending-posts">1.5K posts</div>
-                    </div>
-                </div>
+                <?php 
+                    foreach ($trends as $t) {
+                        echo '
+                            <div class="trending-item">
+                                <div>
+                                    <div class="trending-topic">#' . $t["name"]. '</div>
+                                    <div class="trending-posts">' . convert_number(intval($t["usage_count"])) . ' posts</div>
+                                </div>
+                            </div>
+                        ';
+                    }
+                ?>
             </div>
 
             <div class="widget">
                 <h3>Suggested for You</h3>
-                <div class="suggested-user">
-                    <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=80&h=80&fit=crop&crop=face" alt="Suggested User" class="suggested-avatar">
-                    <div class="suggested-info">
-                        <div class="suggested-name">David Kim</div>
-                        <div class="suggested-username">@davidkim</div>
-                    </div>
-                    <button class="follow-btn">Follow</button>
-                </div>
-                <div class="suggested-user">
-                    <img src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=80&h=80&fit=crop&crop=face" alt="Suggested User" class="suggested-avatar">
-                    <div class="suggested-info">
-                        <div class="suggested-name">Maria Santos</div>
-                        <div class="suggested-username">@mariasantos</div>
-                    </div>
-                    <button class="follow-btn">Follow</button>
-                </div>
-                <div class="suggested-user">
-                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop&crop=face" alt="Suggested User" class="suggested-avatar">
-                    <div class="suggested-info">
-                        <div class="suggested-name">James Wilson</div>
-                        <div class="suggested-username">@jameswilson</div>
-                    </div>
-                    <button class="follow-btn">Follow</button>
-                </div>
+                <?php
+                    foreach ($suggestion_records as $sr) {
+                        $profile_picture = $sr["profile_picture"] ? "./uploads/profile_pictures/" . $sr["profile_picture"] : "";
+                        $fname = $sr["fname"];
+                        $lname = $sr["lname"];
+                        $username = $sr["username"];
+                        
+                        echo '
+                            <div class="suggested-user">
+                                <img src="' . $profile_picture . '" alt="Suggested User" class="suggested-avatar">
+                                <div class="suggested-info">
+                                    <div class="suggested-name">' . $fname . " " . $lname . '</div>
+                                    <div class="suggested-username">@' . $username . '</div>
+                                </div>
+                                <button class="follow-btn">Follow</button>
+                            </div>
+                        ';
+                    }
+                ?>
             </div>
 
             <div class="widget">
@@ -287,19 +237,19 @@
                 <div class="trending-item">
                     <div>
                         <div class="trending-topic">Following</div>
-                        <div class="trending-posts">245</div>
+                        <div class="trending-posts"><?php echo convert_number(intval($following_count)) ?></div>
                     </div>
                 </div>
                 <div class="trending-item">
                     <div>
                         <div class="trending-topic">Followers</div>
-                        <div class="trending-posts">1,023</div>
+                        <div class="trending-posts"><?php echo convert_number(intval($follows_count)) ?></div>
                     </div>
                 </div>
                 <div class="trending-item">
                     <div>
                         <div class="trending-topic">Posts</div>
-                        <div class="trending-posts">87</div>
+                        <div class="trending-posts"><?php echo convert_number(intval($posts_count)) ?></div>
                     </div>
                 </div>
             </div>
