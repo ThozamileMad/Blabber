@@ -1,6 +1,40 @@
 // Post composer functionality
 const textarea = document.querySelector(".composer-textarea");
 const postBtn = document.querySelector(".post-btn");
+const $imageInput = $("#photo-upload");
+const $imagePreview = $(".post-image-preview");
+const $videoInput = $("#video-upload");
+const $videoPreview = $(".post-video-preview");
+const $textarea = $(".composer-textarea");
+const $postBtn = $(".post-btn");
+
+const showPreview = ($input, $preview, $class) => {
+  const url = URL.createObjectURL($input[0].files[0]);
+  $preview.attr("src", url);
+  $preview.removeClass($class);
+};
+
+const removePreview = ($input, $preview, $class) => {
+  $input.val("");
+  $preview.attr("src", "");
+  $preview.addClass($class);
+};
+
+$imageInput.on("change", function () {
+  if (!(this.files && this.files.length > 0)) {
+    removePreview($(this), $imagePreview, "post-image-preview");
+    return;
+  }
+  showPreview($(this), $imagePreview, "post-image-preview");
+});
+
+$videoInput.on("change", function () {
+  if (!(this.files && this.files.length > 0)) {
+    removePreview($(this), $videoPreview, "post-video-preview");
+    return;
+  }
+  showPreview($(this), $videoPreview, "post-video-preview");
+});
 
 textarea.addEventListener("input", function () {
   if (this.value.trim().length > 0) {
@@ -8,6 +42,20 @@ textarea.addEventListener("input", function () {
   } else {
     postBtn.disabled = true;
   }
+});
+
+$postBtn.on("click", function () {
+  const data = { content: $textarea.val() };
+
+  fetch("./includes/post.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  })
+    .then((response) => response.text())
+    .then((result) => {
+      console.log(result);
+    });
 });
 
 // Like button functionality
@@ -48,7 +96,7 @@ sessionStorage.setItem("fname", "John");
 sessionStorage.setItem("lname", "Doe");
 sessionStorage.setItem("username", "JohnDoe");
 sessionStorage.setItem("email", "JohnDoe@gmail.com");
-sessionStorage.setItem("profile_picture", "./uploads/profile_pictures/1.jpg"); 
+sessionStorage.setItem("profile_picture", "./uploads/profile_pictures/1.jpg");
 sessionStorage.setItem("last_activity", Date.now());
 
 postBtn.addEventListener("click", function () {
@@ -63,10 +111,16 @@ postBtn.addEventListener("click", function () {
       newPost.className = "post";
       newPost.innerHTML = `
                         <div class="post-header">
-                            <img src="${sessionStorage.getItem("profile_picture")}" alt="Your Avatar" class="post-avatar">
+                            <img src="${sessionStorage.getItem(
+                              "profile_picture"
+                            )}" alt="Your Avatar" class="post-avatar">
                             <div class="post-user-info">
-                                <h4>${sessionStorage.getItem("fname")} ${sessionStorage.getItem("lname")}</h4>
-                                <p>@${sessionStorage.getItem("username")} • now</p>
+                                <h4>${sessionStorage.getItem(
+                                  "fname"
+                                )} ${sessionStorage.getItem("lname")}</h4>
+                                <p>@${sessionStorage.getItem(
+                                  "username"
+                                )} • now</p>
                             </div>
                         </div>
                         <div class="post-content">
@@ -122,10 +176,8 @@ postBtn.addEventListener("click", function () {
   }
 });
 
-// Search functionality
 const searchInput = document.querySelector(".search-bar input");
 searchInput.addEventListener("input", function () {
-  // Simulate search functionality
   if (this.value.length > 2) {
     console.log("Searching for:", this.value);
   }
