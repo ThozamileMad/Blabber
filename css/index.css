@@ -212,6 +212,72 @@ body {
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
+/* File upload styles */
+.file-input {
+  display: none;
+}
+
+.file-preview-container {
+  margin: 16px 0;
+  border: 2px dashed rgba(59, 130, 246, 0.3);
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(249, 250, 251, 0.5);
+}
+
+.file-preview-content {
+  position: relative;
+}
+
+.file-preview {
+  width: 100%;
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.preview-image,
+.preview-video {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 8px;
+  object-fit: cover;
+  display: block;
+}
+
+.preview-video {
+  background: #000;
+}
+
+.remove-file-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(239, 68, 68, 0.9);
+  backdrop-filter: blur(10px);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.remove-file-btn:hover {
+  background: rgba(239, 68, 68, 1);
+  transform: scale(1.1);
+}
+
+.remove-file-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
 .composer-actions {
   display: flex;
   justify-content: space-between;
@@ -234,6 +300,10 @@ body {
   cursor: pointer;
   color: #6b7280;
   transition: all 0.3s ease;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .composer-btn:hover {
@@ -317,12 +387,53 @@ body {
   margin-bottom: 12px;
 }
 
-.post-image {
+/* Fixed media styles with proper constraints */
+
+.post-image-preview,
+.post-video-preview {
+  display: none !important;
+}
+
+.post-image,
+.post-video {
   width: 100%;
   border-radius: 12px;
   margin: 16px 0;
   max-height: 400px;
   object-fit: cover;
+  display: block;
+  background: #f3f4f6;
+}
+
+/* Specific video styling */
+.post-video {
+  max-height: 300px; /* Slightly shorter for videos */
+  background: #000;
+}
+
+/* Video controls styling */
+.post-video::-webkit-media-controls-panel {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.post-video::-webkit-media-controls-play-button,
+.post-video::-webkit-media-controls-volume-slider,
+.post-video::-webkit-media-controls-timeline {
+  background-color: #3b82f6;
+}
+
+/* For very wide images/videos, maintain aspect ratio */
+@media (min-width: 768px) {
+  .post-image,
+  .post-video {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Landscape videos get different treatment */
+  .post-video[style*="aspect-ratio"] {
+    max-height: 350px;
+  }
 }
 
 .post-actions {
@@ -509,6 +620,24 @@ body {
   .action-buttons {
     justify-content: space-around;
   }
+
+  /* Mobile media constraints */
+  .post-image,
+  .post-video,
+  .preview-image,
+  .preview-video {
+    max-height: 300px;
+    margin: 12px 0;
+  }
+
+  .post-video,
+  .preview-video {
+    max-height: 250px;
+  }
+
+  .file-preview-container {
+    margin: 12px 0;
+  }
 }
 
 @media (max-width: 480px) {
@@ -531,6 +660,20 @@ body {
   .composer-header {
     flex-wrap: wrap;
     gap: 8px;
+  }
+
+  /* Small screen media constraints */
+  .post-image,
+  .post-video,
+  .preview-image,
+  .preview-video {
+    max-height: 250px;
+    margin: 8px 0;
+  }
+
+  .post-video,
+  .preview-video {
+    max-height: 200px;
   }
 }
 
@@ -570,4 +713,47 @@ body {
   50% {
     transform: translateY(-30px) rotate(180deg) scale(1.1);
   }
+}
+
+/* Loading states for media */
+.post-image[src=""],
+.post-video[src=""],
+.preview-image[src=""],
+.preview-video[src=""] {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Media error states */
+.post-image:not([src]),
+.post-video:not([src]),
+.preview-image:not([src]),
+.preview-video:not([src]) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f4f6;
+  color: #9ca3af;
+  font-size: 14px;
+  min-height: 100px;
+}
+
+.post-image:not([src]):before,
+.preview-image:not([src]):before {
+  content: "Image failed to load";
+}
+
+.post-video:not([src]):before,
+.preview-video:not([src]):before {
+  content: "Video failed to load";
 }
