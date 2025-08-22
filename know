@@ -1,0 +1,261 @@
+# MEDIA POSTS
+/*
+    header("Content-Type: application/json");
+    
+    // Only execution time can be set at runtime
+    ini_set('max_execution_time', 300);
+    ini_set('memory_limit', '256M');
+    
+    // Social media optimal dimensions and settings
+    const MAX_WIDTH = 1080;
+    const MAX_HEIGHT = 1350; // Instagram portrait ratio (4:5)
+    const MIN_WIDTH = 320;
+    const MIN_HEIGHT = 240;
+    // Use dynamic limit based on PHP settings, with fallback
+    $php_max_upload = (int)(ini_get('upload_max_filesize'));
+    $php_max_post = (int)(ini_get('post_max_size'));
+    $max_upload_bytes = min($php_max_upload, $php_max_post, 2) * 1024 * 1024; // Convert to bytes
+    
+    const MAX_FILE_SIZE = 1.5 * 1024 * 1024; // 1.5MB to be safe
+    const QUALITY = 85; // JPEG quality
+    
+    $allowed_extensions = ['jpg', 'jpeg', 'png', 'webp'];
+    $allowed_mime_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    
+    $data = [];
+    
+    // Process text input
+    if (isset($_POST["text"])) {
+        $text = $_POST["text"];
+        $data["text"] = filter_input(INPUT_POST, "text", FILTER_SANITIZE_SPECIAL_CHARS);
+    }
+    
+    // Process image upload
+    if (isset($_FILES["image"])) {
+        $image = $_FILES["image"];
+        
+        // Validate upload errors with detailed messages
+        if ($image["error"] !== UPLOAD_ERR_OK) {
+            $error_messages = [
+                UPLOAD_ERR_INI_SIZE => "File too large. Maximum allowed: " . ini_get('upload_max_filesize'),
+                UPLOAD_ERR_FORM_SIZE => "File exceeds form maximum size limit",
+                UPLOAD_ERR_PARTIAL => "File was only partially uploaded",
+                UPLOAD_ERR_NO_FILE => "No file was uploaded",
+                UPLOAD_ERR_NO_TMP_DIR => "Missing temporary upload directory",
+                UPLOAD_ERR_CANT_WRITE => "Failed to write file to disk",
+                UPLOAD_ERR_EXTENSION => "Upload stopped by PHP extension"
+            ];
+            
+            $data["status"] = "error";
+            $data["message"] = isset($error_messages[$image["error"]]) 
+                ? $error_messages[$image["error"]] 
+                : "Upload failed with error code: " . $image["error"];
+            $data["php_limits"] = [
+                "upload_max_filesize" => ini_get('upload_max_filesize'),
+                "post_max_size" => ini_get('post_max_size'),
+                "max_execution_time" => ini_get('max_execution_time')
+            ];
+            echo json_encode($data);
+            exit;
+        }
+        
+        // Check file size against both PHP limits and our limit
+        $effective_max_size = min(MAX_FILE_SIZE, $max_upload_bytes);
+        if ($image["size"] > $effective_max_size) {
+            $data["status"] = "error";
+            $data["message"] = "File size exceeds maximum limit of " . round($effective_max_size / 1024 / 1024, 1) . "MB";
+            echo json_encode($data);
+            exit;
+        }
+        
+        // Get file extension from original filename (not tmp_name)
+        $file_ext = strtolower(pathinfo($image['name'], PATHINFO_EXTENSION));
+        
+        // Validate extension
+        if (!in_array($file_ext, $allowed_extensions)) {
+            $data["status"] = "error";
+            $data["message"] = "Invalid file extension. Allowed: " . implode(', ', $allowed_extensions);
+            echo json_encode($data);
+            exit;
+        }
+        
+        // Validate MIME type for security
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mime_type = finfo_file($finfo, $image['tmp_name']);
+        finfo_close($finfo);
+        
+        if (!in_array($mime_type, $allowed_mime_types)) {
+            $data["status"] = "error";
+            $data["message"] = "Invalid file type detected";
+            echo json_encode($data);
+            exit;
+        }
+        
+        // Get image dimensions and validate
+        $image_info = getimagesize($image['tmp_name']);
+        if (!$image_info) {
+            $data["status"] = "error";
+            $data["message"] = "Invalid image file";
+            echo json_encode($data);
+            exit;
+        }
+        
+        list($original_width, $original_height) = $image_info;
+        
+        // Validate minimum dimensions
+        if ($original_width < MIN_WIDTH || $original_height < MIN_HEIGHT) {
+            $data["status"] = "error";
+            $data["message"] = "Image too small. Minimum dimensions: " . MIN_WIDTH . "x" . MIN_HEIGHT . "px";
+            echo json_encode($data);
+            exit;
+        }
+        
+        // Create image resource from uploaded file
+        switch ($mime_type) {
+            case 'image/jpeg':
+            case 'image/jpg':
+                $source_image = imagecreatefromjpeg($image['tmp_name']);
+                break;
+            case 'image/png':
+                $source_image = imagecreatefrompng($image['tmp_name']);
+                break;
+            case 'image/webp':
+                $source_image = imagecreatefromwebp($image['tmp_name']);
+                break;
+            default:
+                $data["status"] = "error";
+                $data["message"] = "Unsupported image format";
+                echo json_encode($data);
+                exit;
+        }
+        
+        if (!$source_image) {
+            $data["status"] = "error";
+            $data["message"] = "Failed to process image";
+            echo json_encode($data);
+            exit;
+        }
+        
+        // Calculate optimal dimensions maintaining aspect ratio
+        $aspect_ratio = $original_width / $original_height;
+        $target_aspect_ratio = MAX_WIDTH / MAX_HEIGHT;
+        
+        if ($original_width <= MAX_WIDTH && $original_height <= MAX_HEIGHT) {
+            // Image is already within limits, no resizing needed
+            $new_width = $original_width;
+            $new_height = $original_height;
+            $final_image = $source_image;
+        } else {
+            // Resize image to fit within maximum dimensions
+            if ($aspect_ratio > $target_aspect_ratio) {
+                // Image is wider, fit by width
+                $new_width = MAX_WIDTH;
+                $new_height = round(MAX_WIDTH / $aspect_ratio);
+            } else {
+                // Image is taller, fit by height
+                $new_height = MAX_HEIGHT;
+                $new_width = round(MAX_HEIGHT * $aspect_ratio);
+            }
+            
+            // Create new image with calculated dimensions
+            $final_image = imagecreatetruecolor($new_width, $new_height);
+            
+            // Preserve transparency for PNG
+            if ($mime_type === 'image/png') {
+                imagealphablending($final_image, false);
+                imagesavealpha($final_image, true);
+                $transparent = imagecolorallocatealpha($final_image, 255, 255, 255, 127);
+                imagefill($final_image, 0, 0, $transparent);
+            }
+            
+            // Resize the image
+            imagecopyresampled(
+                $final_image,
+                $source_image,
+                0, 0, 0, 0,
+                $new_width, $new_height,
+                $original_width, $original_height
+            );
+        }
+        
+        // Create target directory if it doesn't exist
+        $target_dir = __DIR__ . "/../uploads/post_pictures/";
+        if (!is_dir($target_dir)) {
+            if (!mkdir($target_dir, 0755, true)) {
+                $data["status"] = "error";
+                $data["message"] = "Failed to create upload directory";
+                echo json_encode($data);
+                exit;
+            }
+        }
+        
+        // Generate unique filename
+        $file_name = uniqid("post_") . "_" . time() . ".jpg";
+        $target_file = $target_dir . $file_name;
+        
+        // Save processed image as JPEG
+        $saved = imagejpeg($final_image, $target_file, QUALITY);
+        
+        // Clean up memory
+        imagedestroy($final_image);
+        if ($final_image !== $source_image) {
+            imagedestroy($source_image);
+        }
+        
+        if (!$saved) {
+            $data["status"] = "error";
+            $data["message"] = "Failed to save processed image";
+            echo json_encode($data);
+            exit;
+        }
+        
+        // Get final file size and dimensions
+        $final_image_info = getimagesize($target_file);
+        $final_file_size = filesize($target_file);
+        
+        $data["image_path"] = $target_file;
+        $data["image_url"] = "/uploads/post_pictures/" . $file_name; // Relative URL for frontend
+        $data["original_dimensions"] = $original_width . "x" . $original_height;
+        $data["final_dimensions"] = $final_image_info[0] . "x" . $final_image_info[1];
+        $data["file_size"] = round($final_file_size / 1024, 2) . " KB";
+        $data["status"] = "success";
+    }
+    
+    // Return response
+    if (!isset($data["status"])) {
+        $data["status"] = "success";
+    }
+    
+    echo json_encode($data);
+
+<!-- 
+USAGE NOTES:
+- Images are automatically resized to fit within 1080x1350px (Instagram optimal)
+- Minimum dimensions: 320x240px
+- Maximum file size: 5MB
+- Supported formats: JPG, PNG, WebP
+- All images are converted to JPG for consistency
+- Aspect ratios are preserved during resizing
+- PNG transparency is handled properly during conversion
+
+FRONTEND JavaScript example:
+const formData = new FormData();
+formData.append('text', 'Your post text here');
+formData.append('image', fileInput.files[0]);
+
+fetch('your-upload-endpoint.php', {
+    method: 'POST',
+    body: formData
+})
+.then(response => response.json())
+.then(data => {
+    if (data.status === 'success') {
+        console.log('Image URL:', data.image_url);
+        console.log('Dimensions:', data.final_dimensions);
+    } else {
+        console.error('Upload failed:', data.message);
+    }
+});
+-->
+
+*/
