@@ -45,17 +45,33 @@ textarea.addEventListener("input", function () {
 });
 
 $postBtn.on("click", function () {
-  const data = { content: $textarea.val() };
+  const textAreaVal = $textarea.val().trim();
+  const imageFile = $imageInput[0].files[0] ;
 
-  fetch("./includes/post.php", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  })
-    .then((response) => response.text())
-    .then((result) => {
-      console.log(result);
-    });
+  const formData = new FormData();
+  
+  textAreaVal ? formData.append("text", textAreaVal) : null;
+  imageFile ? formData.append("image", imageFile) : null;
+  for (let pair of formData.entries()) {
+    console.log(pair[0]+ ':', pair[1]);
+  }
+
+  $.ajax({
+    url: "./includes/post.php",
+    type: "POST",
+    data: formData,
+    contentType: false,
+    processData: false,
+    success: function (res) {
+      console.log("Success: ", res);
+      alert('Upload successful!');
+    },
+    error: function (xhr, status, error) {
+      console.error("Error:", error);
+      alert('Upload failed');
+    }
+  });
+
 });
 
 // Like button functionality
@@ -101,12 +117,10 @@ sessionStorage.setItem("last_activity", Date.now());
 
 postBtn.addEventListener("click", function () {
   if (textarea.value.trim()) {
-    // Simulate posting
     this.disabled = true;
     this.textContent = "Posting...";
 
     setTimeout(() => {
-      // Create new post element
       const newPost = document.createElement("article");
       newPost.className = "post";
       newPost.innerHTML = `
